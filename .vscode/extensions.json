@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "styled-components.vscode-styled-components",
+    "dsznajder.es7-react-js-snippets",
+    "formulahendry.auto-rename-tag",
+    "esbenp.prettier-vscode",
+    "ritwickdey.liveserver",
+    "pkief.material-icon-theme"
+  ]
+}

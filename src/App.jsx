@@ -1,23 +1,30 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import Nav from "./components/Nav"
-import Error from "./components/Error"
+import NavBar from "./components/Navbar/index"
+import Error from "./components/Error/index"
 import Home from "./pages/Home"
 import Survey from "./pages/Survey"
 import Results from "./pages/Results"
 import Freelance from "./pages/Freelance"
+import Footer from "./components/Footer"
+import ThemeProvider from "./utils/contexts"
+import StyleGlobalStyle from "./utils/style/GlobalStyle"
 
 function App() {
   return (
     <>
       <Router>
-        <Nav />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/survey/:questionNumber" element={<Survey />} />
-          <Route path="/results" element={<Results />} />
-          <Route path="/freelance" element={<Freelance />} />
-          <Route path="*" element={<Error />}/>
-        </Routes>
+        <ThemeProvider>
+          <StyleGlobalStyle />
+          <NavBar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/survey/:questionNumber" element={<Survey />} />
+            <Route path="/results" element={<Results />} />
+            <Route path="/freelance" element={<Freelance />} />
+            <Route path="*" element={<Error />} />
+          </Routes>
+          <Footer />
+        </ThemeProvider>
       </Router>
     </>
   )

@@ -6,7 +6,7 @@ import Survey from "./pages/Survey"
 import Results from "./pages/Results"
 import Freelance from "./pages/Freelance"
 import Footer from "./components/Footer"
-import ThemeProvider from "./utils/contexts"
+import {SurveyProvider, ThemeProvider} from "./utils/contexts/"
 import StyleGlobalStyle from "./utils/style/GlobalStyle"
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
     <>
       <Router>
         <ThemeProvider>
+        <SurveyProvider>
           <StyleGlobalStyle />
           <NavBar />
           <Routes>
@@ -24,6 +25,7 @@ function App() {
             <Route path="*" element={<Error />} />
           </Routes>
           <Footer />
+        </SurveyProvider>
         </ThemeProvider>
       </Router>
     </>

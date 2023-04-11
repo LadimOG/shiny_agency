@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react"
+import { useContext } from "react"
 import { Link } from "react-router-dom"
 import { useParams } from "react-router-dom"
 import Loader from "../components/Loader"
 import Error from "../components/Error/index"
 import styled from "styled-components"
 import { colors } from "../utils/colors"
+import { SurveyContext, ThemeContext } from "../utils/contexts"
+import { useFetch } from "../utils/hooks"
 
 const ContainerSurvey = styled.div`
   height: 100vh;
@@ -13,6 +15,9 @@ const ContainerSurvey = styled.div`
   align-items: center;
   flex-direction: column;
   padding-top: 50px;
+  margin: 20px 20px 0 20px;
+  border-radius: 15px;
+  background-color: ${({isDarkMode}) => isDarkMode === 'light' ? `${colors.backgroundLight}`  : "#2F2E41"};
 `
 const ContainerQuestion = styled.div`
   display: flex;
@@ -36,6 +41,13 @@ const ContainerLink = styled.div`
   align-items: center;
   justify-content: space-evenly;
 `
+const CustomLink = styled(Link)`
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: ${colors.primary};
+`
+
 const SurveyButton = styled.button`
   width: 200px;
   height: 50px;
@@ -46,63 +58,72 @@ const SurveyButton = styled.button`
   border: none;
   margin-right: 10px;
   font-weight: bold;
+  color: ${colors.primary};
+  background-color: ${({ isSelected }) =>
+    !isSelected && colors.secondary};
   &:hover {
     box-shadow: 1px 3px 10px ${colors.secondary};
   }
+  cursor: pointer;
 `
 
 function Survey() {
-  const [questions, setQuestions] = useState({})
-  const [loader, setLoader] = useState(false)
-  const [error, setError] = useState(false)
-
   const { questionNumber } = useParams()
   const questionInt = parseInt(questionNumber)
+  console.log(typeof(questionInt));
   const previousQuestion = questionInt - 1
   const nextQuestion = questionInt + 1
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoader(true)
-      try {
-        const response = await fetch("http://localhost:8000/survey")
-        const { surveyData } = await response.json()
-        setQuestions(surveyData)
-      } catch (error) {
-        console.error(error)
-        setError(true)
-      } finally {
-        setLoader(false)
-      }
-    }
-    fetchData()
-  }, [])
+  const { answer, saveAnswer } = useContext(SurveyContext)
+  const {theme} = useContext(ThemeContext)
 
+  const { data, isLoading, error } = useFetch("http://localhost:8000/survey")
+  const { surveyData } = data
+  const saveReply = (answer) => {
+    saveAnswer({
+      [questionInt]: answer,
+    })
+  }
+  
   return error ? (
     <Error />
   ) : (
-    <ContainerSurvey>
-      <h1>Questionnaire 📝</h1>
+    <ContainerSurvey isDarkMode={theme}>
+      <h1 style={{textAlign: "center", marginBottom: 100}}>QUESTIONNAIRES 📝</h1>
       <h2>Question {questionNumber}</h2>
-      {loader ? (
+      {isLoading ? (
         <Loader />
       ) : (
         <ContainerQuestion>
-          <h3 style={{ textAlign: "center" }}>{questions[questionInt]}</h3>
-          <ContainerResponse>
-            <SurveyButton>OUI</SurveyButton>
-            <SurveyButton>NON</SurveyButton>
-          </ContainerResponse>
+          {surveyData && (
+            <h3 style={{textAlign: "center"}}>{surveyData[questionInt]}</h3>
+          )}
+          {answer && (
+            <ContainerResponse>
+              <SurveyButton
+                onClick={() => saveReply(true)}
+                isSelected={answer[questionInt] === true}
+              >
+                OUI
+              </SurveyButton>
+              <SurveyButton
+                onClick={() => saveReply(false)}
+                isSelected={answer[questionInt] === false}
+              >
+                NON
+              </SurveyButton>
+            </ContainerResponse>
+          )}
         </ContainerQuestion>
       )}
       <ContainerLink>
         {questionInt !== 1 && (
-          <Link to={`/survey/${previousQuestion}`}>précedent</Link>
+          <CustomLink to={`/survey/${previousQuestion}`}>précedent</CustomLink>
         )}
         {questionInt === 6 ? (
-          <Link to="/results">Resultats</Link>
+          <CustomLink to="/results">Resultats</CustomLink>
         ) : (
-          <Link to={`/survey/${nextQuestion}`}>suivant</Link>
+          <CustomLink to={`/survey/${nextQuestion}`}>suivant</CustomLink>
         )}
       </ContainerLink>
     </ContainerSurvey>

@@ -13,15 +13,16 @@ const GlobalStyle = createGlobalStyle`
     width: 100vw;
     height: 100vh;
     padding-top: 88px;
-    background-color: ${({isDarkMode}) => isDarkMode ? '#2F2E41' : "#fff"};
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#2F2E41" : "#fff")};
+    color: ${({ isDarkMode }) => (isDarkMode ? "#fff" : "#2F2E41")};
     margin: 0;
   }
 `
 
 function StyleGlobalStyle() {
-  const {theme} = useContext(ThemeContext)
+  const { theme } = useContext(ThemeContext)
 
-  return <GlobalStyle isDarkMode={theme === 'dark'}/>
+  return <GlobalStyle isDarkMode={theme === "dark"} />
 }
 
 export default StyleGlobalStyle
